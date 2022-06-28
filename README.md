@@ -1,4 +1,4 @@
-# cnmap
+# cmap
 
 > I created cmap while studying for the OSCP to quickly scan hosts and build working directories and files. 
 > It became tedius to do this manually and write out common scans like nikto, gobuster, etc to kick off 
@@ -19,13 +19,13 @@
 Switches:
 
 	 -h		sing lehost - (format: ip,hostname)
-	 -H  	hosts file, one per line (format: ip,hostname)
+	 -H		hosts file, one per line (format: ip,hostname)
 	 -o		create working directory and create README for each host
 
 Examples:
 
-- cmap -h ip,hostname -o 
-- cmap -H hosts.txt -o
+	cmap -h ip,hostname -o 
+	cmap -H hosts.txt -o
 
 Notes:
 
