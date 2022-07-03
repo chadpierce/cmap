@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
-	"strconv"
+	//"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -31,18 +31,21 @@ type PortScanner struct {
 }
 
 func Ulimit() int64 {
-	out, err := exec.Command("ulimit", "-n").Output()
-	if err != nil {
-		panic(err)
-	}
-	
-	s := strings.TrimSpace(string(out))
-	
-	i, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	
+	//	out, err := exec.Command("ulimit", "-n").Output()
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//	
+	//	s := strings.TrimSpace(string(out))
+	//	
+	//	i, err := strconv.ParseInt(s, 10, 64)
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	// NOTE this is failing in kali
+	// 		instead of figuring out why i am 
+	//		hard coding /shrug
+	var i int64 = 4096
 	return i
 }
 
@@ -99,7 +102,7 @@ func ScanPorts(ip string) []int {
 func (s *Scanner) PortScan() {
 
 	for i, host := range s.hosts {
-		if host.state != Up {
+		if host.state != Up || host.state != Maybe {
 			continue;
 		}
 		writeOutput(Info, "TCP Port Scanning: " + host.ip + " (" + host.name + ")")
@@ -122,16 +125,24 @@ func pingTest(ip string) bool {
 	return false
 }
 
-func (s *Scanner) TestConnections() {
+func (s *Scanner) TestConnections(isSkip bool) {
 
-	writeOutput(Info, "Testing connectivity...")
-	for i, host := range s.hosts {
-		if pingTest(host.ip) == true {
-			s.hosts[i].state = Up
-		} else {
-			if pingTest(host.ip) == false {
-				writeOutput(Warn, host.ip + " (" + host.name + ") is down")
-				s.hosts[i].state = Down
+	if isSkip {
+		// if skipping ping, set state to maybe
+		writeOutput(Warn, "🔮 PING TEST DISABLED")
+		for i, _ := range s.hosts {
+			s.hosts[i].state = Maybe
+		}
+	} else { 
+		writeOutput(Info, "Testing connectivity...")
+		for i, host := range s.hosts {
+			if pingTest(host.ip) == true {
+				s.hosts[i].state = Up
+			} else {
+				if pingTest(host.ip) == false {
+					writeOutput(Warn, host.ip + " (" + host.name + ") is down")
+					s.hosts[i].state = Down
+				}
 			}
 		}
 	}

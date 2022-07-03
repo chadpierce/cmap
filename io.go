@@ -15,7 +15,8 @@ func (s *Scanner) PrintOutput() {
 
     writeOutput(Hilite, "\nOUTPUT:\n")
     for i, host := range s.hosts {
-        if host.state != Up {
+        if host.state != Up && host.state != Maybe {
+            // TODO handle maybe separately
             writeOutput(Hilite, "❌ Host " + strconv.Itoa(i) + ": " + host.ip + " (" + host.name + ")")
             writeOutput(Warn, "  " + host.ip + " is not pingable\n")
             continue;

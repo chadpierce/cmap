@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	templateFile string = "/opt/cmap/template.md"
+	templateFileStr string = "/opt/cmap/template.md"
 	outputPath string = "./"
 )
 
@@ -33,6 +33,7 @@ const (
     Unknown HostState = iota
     Up
 	Down
+	Maybe
 	Complete
 )
 
@@ -148,6 +149,7 @@ func main() {
 	argHost := flag.String("h", "", "single host")
 	argHostFile := flag.String("H", "", "list of hosts in file")
 	argWorkingDirs := flag.Bool("o", false, "create working dirs for each host")
+	argSkipPing := flag.Bool("p", false, "ignore ping test")
 	flag.Parse()
 
 	// process host input
@@ -165,7 +167,11 @@ func main() {
 		os.Exit(0)
 	}
 
-	s.TestConnections()
+	//if *argSkipPing == false {
+	s.TestConnections(*argSkipPing)
+	//} else {
+	//	writeOutput(Warn, "🔮 PING TEST DISABLED")
+	//}
 	s.PortScan()
 	s.HttpTest()
 	s.PrintOutput()
