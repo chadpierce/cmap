@@ -102,7 +102,8 @@ func ScanPorts(ip string) []int {
 func (s *Scanner) PortScan() {
 
 	for i, host := range s.hosts {
-		if host.state != Up || host.state != Maybe {
+		if host.state != Up && host.state != Maybe {
+			// TODO handle separately
 			continue;
 		}
 		writeOutput(Info, "TCP Port Scanning: " + host.ip + " (" + host.name + ")")
