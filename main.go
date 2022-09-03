@@ -109,7 +109,7 @@ func getHttpScannerCmds(ip string, port int, isSSL bool) string {
 
 	niktoStr := strings.Replace("nikto -h http://<IP>:<PORT> | tee nikto<PORT>.out", "<IP>", ip, -1)
 	niktoStr = strings.Replace(niktoStr, "<PORT>", strconv.Itoa(port), -1)
-	gobusterStr := strings.Replace("gobuster dir http://<IP>:<PORT> | tee gobuster<PORT>.out", "<IP>", ip, -1)
+	gobusterStr := strings.Replace("gobuster dir http://<IP>:<PORT> -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt | tee gobuster<PORT>.out", "<IP>", ip, -1)
 	gobusterStr = strings.Replace(gobusterStr, "<PORT>", strconv.Itoa(port), -1)
 
 	if isSSL {
@@ -134,7 +134,7 @@ func getNmapCmds(hostname, ip string, ports []int) string {
 	}
 
 	init := "nmap -sC -sV -oN " + hostname + "/nmap/init " + ip
-	full := "nmap -p " + portList + " -oN " + hostname + "/nmap/full " + ip
+	full := "nmap -A -p " + portList + " -oN " + hostname + "/nmap/full " + ip
 	all := "nmap -p- -oN " + hostname + "/nmap/all " + ip
 
 	return init + "\n" + full + "\n" + all
